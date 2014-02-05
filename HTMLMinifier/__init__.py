@@ -20,7 +20,7 @@ _BLOCK_ELEMENTS = frozenset(('address', 'article', 'aside', 'blockquote',
                              'summary', 'table', 'tbody', 'td', 'tfoot', 'th',
                              'thead', 'tr', 'ul'))
 
-_COND_COMMENT_PATTERN = re.compile(r'^\[if [^\]]\]>.*<!\[endif\]$')
+_COND_COMMENT_PATTERN = re.compile(r'^\[if[^\]]+\]>.*<!\[endif\]$', flags=re.DOTALL)
 _WS_PATTERN = re.compile(r'\s+')
 
 
@@ -100,7 +100,7 @@ class HTMLMinifier(HTMLParser):
         """
 
         if not self.remove_comments or \
-           _COND_COMMENT_PATTERN.match(data, re.MULTILINE) is not None:
+           _COND_COMMENT_PATTERN.match(comment) is not None:
             self._buffer.append(u'<!--{}-->'.format(comment))
 
     def handle_starttag(self, tag, attrs):
