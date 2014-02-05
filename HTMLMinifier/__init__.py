@@ -70,13 +70,11 @@ class HTMLMinifier(HTMLParser):
         self._backup = []
 
     def _push_status(self):
-        self._backup.append((self.rawdata, self.lasttag,
-                             self.interesting, self.cdata_elem,
-                             self.getpos()))
+        self._backup.append((self.rawdata, self.lasttag, self.getpos()))
         HTMLParser.reset(self)
 
     def _pop_status(self):
-        self.rawdata, self.lasttag, self.interesting, self.cdata_elem, pos = self._backup.pop()
+        self.rawdata, self.lasttag, pos = self._backup.pop()
         self.updatepos(*pos)
 
     def _enter_newline(self):
