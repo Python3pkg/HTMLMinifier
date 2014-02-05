@@ -119,6 +119,9 @@ class HTMLMinifier(HTMLParser):
 
         if tag in _BLOCK_ELEMENTS:
             self._enter_newline()
+        elif tag in _VOID_ELEMENTS and tag not in _HIDDEN_ELEMENTS:
+            self._remove_begining_ws = False
+            self._last_text_idx = -1
 
         if tag in _PRE_WS_ELEMENTS:
             self._preserve += 1
@@ -132,8 +135,6 @@ class HTMLMinifier(HTMLParser):
         self._buffer.append(u'</{0}>'.format(tag))
         if tag in _BLOCK_ELEMENTS:
             self._enter_newline()
-        elif tag not in _HIDDEN_ELEMENTS:
-            self._remove_begining_ws = False
 
         if tag in _PRE_WS_ELEMENTS:
             self._preserve -= 1

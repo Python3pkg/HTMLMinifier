@@ -98,10 +98,21 @@ class TestMinifier(object):
           for (var i = 0; i < 10; i++) {
               sum += i;
           }
-          console.log(i)
+          console.log(i);
         </script>
         """
         assert_equal(html.strip(), self.minify(html))
+
+    def test_collapseing_spaces(self):
+        html = u"""
+        <p>  This is a [ <a href="index.html"> link </a> ]  </p>
+        <p>  Some <b> highlighted </b> <i> text </i>  </p>
+        <p>  More <b> complex <i> example </i> </b> ! </p>
+        """
+        minified_html = u'<p>This is a [ <a href="index.html">link </a>]</p>' \
+                        u'<p>Some <b>highlighted </b><i>text</i></p>' \
+                        u'<p>More <b>complex <i>example </i></b>!</p>'
+        assert_equal(minified_html, self.minify(html))
 
     def test_entity(self):
         html = u"""
