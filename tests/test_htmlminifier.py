@@ -50,10 +50,15 @@ class TestMinifier(object):
     def test_ie_cond_comment(self):
         html = u"""
         <!--[if lt IE 9]>
-        some comments here
+          <p>  This is a paragraph  </p>
+          <p>  This is another paragraph  </p>
         <![endif]-->
         """
-        assert_equal(html.strip(), self.minify(html))
+        minified_html = u'<!--[if lt IE 9]>' \
+                        u'<p>This is a paragraph</p>' \
+                        u'<p>This is another paragraph</p>' \
+                        u'<![endif]-->'
+        assert_equal(minified_html, self.minify(html))
 
     def test_tag_with_attrs(self):
         html = u"""

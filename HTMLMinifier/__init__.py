@@ -24,7 +24,7 @@ _BLOCK_ELEMENTS = frozenset(('address', 'article', 'aside', 'blockquote',
                              'summary', 'table', 'tbody', 'td', 'tfoot', 'th',
                              'thead', 'tr', 'ul'))
 
-_COND_COMMENT_PATTERN = re.compile(r'^\[if[^\]]+\]>.*<!\[endif\]$', flags=re.DOTALL)
+_COND_COMMENT_PATTERN = re.compile(r'^\[if([^\]]+)\]>(.*)<!\[endif\]$', flags=re.DOTALL)
 _WS_PATTERN = re.compile(r'\s+')
 
 
@@ -67,6 +67,18 @@ class HTMLMinifier(HTMLParser):
         self._preserve = 0
         self._last_text_idx = -1
 
+        self._backup = []
+
+    def _push_status(self):
+        self._backup.append((self.rawdata, self.lasttag,
+                             self.interesting, self.cdata_elem,
+                             self.getpos()))
+        HTMLParser.reset(self)
+
+    def _pop_status(self):
+        self.rawdata, self.lasttag, self.interesting, self.cdata_elem, pos = self._backup.pop()
+        self.updatepos(*pos)
+
     def _enter_newline(self):
         """
         Remove the trailing spaces in the current line, and then mark that the
@@ -91,7 +103,7 @@ class HTMLMinifier(HTMLParser):
             tokens.append(u'{0}={1}'.format(name, val))
 
         self._buffer.append(u'<{0}{1}>'.format(' '.join(tokens),
-                                             '/' if closing else ''))
+                                               '/' if closing else ''))
 
     def handle_decl(self, decl):
         self._buffer.append('<!{0}>'.format(decl))
@@ -105,8 +117,17 @@ class HTMLMinifier(HTMLParser):
             <http://msdn.microsoft.com/en-us/library/ms537512.ASPX>`_
         """
 
-        if not self.remove_comments or \
-           _COND_COMMENT_PATTERN.match(comment) is not None:
+        match = _COND_COMMENT_PATTERN.match(comment)
+        if match is not None:
+            cond = match.group(1)
+            content = match.group(2)
+
+            self._buffer.append(u'<!--[if{0}]>'.format(cond))
+            self._push_status()
+            self.feed(content)
+            self._pop_status()
+            self._buffer.append(u'<![endif]-->')
+        elif not self.remove_comments:
             self._buffer.append(u'<!--{0}-->'.format(comment))
 
     def handle_starttag(self, tag, attrs):
