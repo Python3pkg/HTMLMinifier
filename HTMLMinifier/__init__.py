@@ -62,6 +62,15 @@ class HTMLMinifier(HTMLParser):
         self._last_text_idx = -1
 
     def _enter_newline(self):
+        """
+        Remove the trailing spaces in the current line, and then mark that the
+        leading spaces of the next line need to be removed.
+
+        .. seealso::
+           `CSS Text Module Level 3 - The White Space Processing Rules
+            <http://www.w3.org/TR/css3-text/#white-space-phase-2>`_
+        """
+
         if self._last_text_idx >= 0:
             data = self._buffer[self._last_text_idx]
             self._buffer[self._last_text_idx] = data.rstrip()
