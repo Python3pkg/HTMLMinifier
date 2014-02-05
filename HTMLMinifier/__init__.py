@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from HTMLParser import HTMLParser
+from six.moves.html_parser import HTMLParser
 
 _EMPTY_SET = frozenset()
 
@@ -53,6 +53,8 @@ class HTMLMinifier(HTMLParser):
     def __init__(self, remove_comments=True, remove_quotes=False):
         self.remove_comments = remove_comments
         self.remove_quotes = remove_quotes
+
+        self.strict = False  # compatible with Python 3
 
         self.reset()
 
