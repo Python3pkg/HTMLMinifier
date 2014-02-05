@@ -7,6 +7,8 @@ _EMPTY_SET = frozenset()
 
 _PRE_WS_ELEMENTS = frozenset(('pre', 'script', 'style', 'textarea'))
 
+_RM_WS_ELEMENTS = frozenset(('colgroup', 'datalist', 'head', 'select'))
+
 _VOID_ELEMENTS = frozenset(('area', 'base', 'br', 'col', 'command', 'embed',
                             'hr', 'img', 'input', 'keygen', 'link', 'meta',
                             'param', 'source', 'track', 'wbr'))
@@ -163,6 +165,11 @@ class HTMLMinifier(HTMLParser):
            `CSS Text Module Level 3 - The White Space Processing Rules
             <http://dev.w3.org/csswg/css-text-3/#egbidiwscollapse>`_
         """
+
+        if self._tag_stack and self._tag_stack[-1] in _RM_WS_ELEMENTS:
+            # just ignore the content of this element
+            assert data.strip() == ''
+            return
 
         if self._preserve == 0:
             if self._remove_begining_ws:
