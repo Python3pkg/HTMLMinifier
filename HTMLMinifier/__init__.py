@@ -11,6 +11,8 @@ _VOID_ELEMENTS = frozenset(('area', 'base', 'br', 'col', 'command', 'embed',
                             'hr', 'img', 'input', 'keygen', 'link', 'meta',
                             'param', 'source', 'track', 'wbr'))
 
+_HIDDEN_ELEMENTS = frozenset(('datalist', 'script', 'style'))
+
 _BLOCK_ELEMENTS = frozenset(('address', 'article', 'aside', 'blockquote',
                              'body', 'dd', 'details', 'div', 'dl', 'dt',
                              'fieldset', 'figcaption', 'figure', 'footer',
@@ -126,6 +128,9 @@ class HTMLMinifier(HTMLParser):
         self._buffer.append(u'</{}>'.format(tag))
         if tag in _BLOCK_ELEMENTS:
             self._enter_newline()
+        elif tag not in _HIDDEN_ELEMENTS:
+            self._remove_begining_ws = False
+            self._last_text_idx = -1
 
         if tag in _PRE_WS_ELEMENTS:
             self._preserve -= 1
@@ -143,6 +148,11 @@ class HTMLMinifier(HTMLParser):
         """
         is_foreign = tag not in _VOID_ELEMENTS
         self._append_tag(tag, attrs, closing=is_foreign)
+        if tag in _BLOCK_ELEMENTS:
+            self._enter_newline()
+        elif tag not in _HIDDEN_ELEMENTS:
+            self._remove_begining_ws = False
+            self._last_text_idx = -1
 
     def handle_data(self, data):
         """
@@ -176,9 +186,13 @@ class HTMLMinifier(HTMLParser):
 
     def handle_entityref(self, entity):
         self._buffer.append(u'&{};'.format(entity))
+        self._remove_begining_ws = False
+        self._last_text_idx = -1
 
     def handle_charref(self, char):
         self._buffer.append(u'&#{};'.format(char))
+        self._remove_begining_ws = False
+        self._last_text_idx = -1
 
     def get_minified_html(self):
-        return ''.join(self._buffer)
+        return ''.join(self._buffer).rstrip()
