@@ -134,7 +134,6 @@ class HTMLMinifier(HTMLParser):
             self._enter_newline()
         elif tag not in _HIDDEN_ELEMENTS:
             self._remove_begining_ws = False
-            self._last_text_idx = -1
 
         if tag in _PRE_WS_ELEMENTS:
             self._preserve -= 1
