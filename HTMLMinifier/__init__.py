@@ -87,14 +87,14 @@ class HTMLMinifier(HTMLParser):
         tokens = [tag]
         for name, val in attrs:
             if not self.remove_quotes or ' ' in val:
-                val = '"{}"'.format(val)
-            tokens.append(u'{}={}'.format(name, val))
+                val = '"{0}"'.format(val)
+            tokens.append(u'{0}={1}'.format(name, val))
 
-        self._buffer.append(u'<{}{}>'.format(' '.join(tokens),
+        self._buffer.append(u'<{0}{1}>'.format(' '.join(tokens),
                                              '/' if closing else ''))
 
     def handle_decl(self, decl):
-        self._buffer.append('<!{}>'.format(decl))
+        self._buffer.append('<!{0}>'.format(decl))
 
     def handle_comment(self, comment):
         """
@@ -107,7 +107,7 @@ class HTMLMinifier(HTMLParser):
 
         if not self.remove_comments or \
            _COND_COMMENT_PATTERN.match(comment) is not None:
-            self._buffer.append(u'<!--{}-->'.format(comment))
+            self._buffer.append(u'<!--{0}-->'.format(comment))
 
     def handle_starttag(self, tag, attrs):
         if self._tag_stack and \
@@ -129,7 +129,7 @@ class HTMLMinifier(HTMLParser):
         while tag != self._tag_stack.pop():
             pass
 
-        self._buffer.append(u'</{}>'.format(tag))
+        self._buffer.append(u'</{0}>'.format(tag))
         if tag in _BLOCK_ELEMENTS:
             self._enter_newline()
         elif tag not in _HIDDEN_ELEMENTS:
@@ -194,12 +194,12 @@ class HTMLMinifier(HTMLParser):
         self._buffer.append(data)
 
     def handle_entityref(self, entity):
-        self._buffer.append(u'&{};'.format(entity))
+        self._buffer.append(u'&{0};'.format(entity))
         self._remove_begining_ws = False
         self._last_text_idx = -1
 
     def handle_charref(self, char):
-        self._buffer.append(u'&#{};'.format(char))
+        self._buffer.append(u'&#{0};'.format(char))
         self._remove_begining_ws = False
         self._last_text_idx = -1
 
