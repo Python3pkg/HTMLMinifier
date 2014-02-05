@@ -180,5 +180,5 @@ class HTMLMinifier(HTMLParser):
     def handle_charref(self, char):
         self._buffer.append(u'&#{};'.format(char))
 
-    def get_compressed_html(self):
+    def get_minified_html(self):
         return ''.join(self._buffer)
