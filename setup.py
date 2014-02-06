@@ -9,6 +9,7 @@ from setuptools import setup
 
 setup(
     name='HTMLMinifier',
+    version='0.1.0',
     author='Chi-En Wu',
     author_email='',
     description='A simple HTML5 minifier written in Python.',
