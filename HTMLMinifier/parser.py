@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import re
 import sys
-if sys.version_info.major < 3:
+if sys.version_info[0] < 3:
     from HTMLParser import HTMLParser
 else:
     from html.parser import HTMLParser
