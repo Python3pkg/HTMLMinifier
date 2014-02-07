@@ -84,6 +84,10 @@ class Parser(HTMLParser):
         self.rawdata, self.lasttag, pos = self._backup.pop()
         self.updatepos(*pos)
 
+    def _reset_newline_status(self):
+        self._remove_begining_ws = False
+        self._last_text_idx = -1
+
     def _enter_newline(self):
         """
         Remove the trailing spaces in the current line, and then mark that the
@@ -146,8 +150,7 @@ class Parser(HTMLParser):
         if tag in _BLOCK_ELEMENTS:
             self._enter_newline()
         elif tag in _VOID_ELEMENTS and tag not in _HIDDEN_ELEMENTS:
-            self._remove_begining_ws = False
-            self._last_text_idx = -1
+            self._reset_newline_status()
 
         if tag in _PRE_WS_ELEMENTS:
             self._preserve += 1
@@ -181,8 +184,7 @@ class Parser(HTMLParser):
         if tag in _BLOCK_ELEMENTS:
             self._enter_newline()
         elif tag not in _HIDDEN_ELEMENTS:
-            self._remove_begining_ws = False
-            self._last_text_idx = -1
+            self._reset_newline_status()
 
     def handle_data(self, data):
         """
@@ -215,19 +217,17 @@ class Parser(HTMLParser):
                 self._remove_begining_ws = True
         else:
             # the content cannot be stripped
-            self._last_text_idx = -1
+            self._reset_newline_status()
 
         self._buffer.append(data)
 
     def handle_entityref(self, entity):
         self._buffer.append('&{0};'.format(entity))
-        self._remove_begining_ws = False
-        self._last_text_idx = -1
+        self._reset_newline_status()
 
     def handle_charref(self, char):
         self._buffer.append('&#{0};'.format(char))
-        self._remove_begining_ws = False
-        self._last_text_idx = -1
+        self._reset_newline_status()
 
     def get_minified_html(self):
         return ''.join(self._buffer).rstrip()
