@@ -41,6 +41,7 @@ def _make_emitting_rules(rules):
 
 # See: http://www.w3.org/TR/html-markup/elements.html
 _EMITTING_RULES = _make_emitting_rules((
+    (('colgroup',), frozenset(('thead', 'tbody', 'tfoot', 'tr'))),
     (('dd', 'dt'), frozenset(('dt', 'dd'))),
     (('li',), frozenset(('li',))),
     (('optgroup',), frozenset(('optgroup',))),
