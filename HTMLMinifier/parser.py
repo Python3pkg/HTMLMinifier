@@ -34,13 +34,13 @@ _COND_COMMENT_PATTERN = re.compile(r'^\[if([^\]]+)\]>(.*)<!\[endif\]$', flags=re
 _WS_PATTERN = re.compile(r'\s+')
 
 
-def _make_emitting_rules(rules):
+def _make_omission_rules(rules):
     return dict((tag, followed_tags)
                 for tags, followed_tags in rules for tag in tags)
 
 
 # See: http://www.w3.org/TR/html-markup/elements.html
-_EMITTING_RULES = _make_emitting_rules((
+_OMISSION_RULES = _make_omission_rules((
     (('colgroup',), frozenset(('thead', 'tbody', 'tfoot', 'tr'))),
     (('dd', 'dt'), frozenset(('dt', 'dd'))),
     (('li',), frozenset(('li',))),
@@ -141,7 +141,7 @@ class Parser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         if self._tag_stack and \
-           tag in _EMITTING_RULES.get(self._tag_stack[-1], _EMPTY_SET):
+           tag in _OMISSION_RULES.get(self._tag_stack[-1], _EMPTY_SET):
             self._tag_stack.pop()
 
         if tag not in _VOID_ELEMENTS:
