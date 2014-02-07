@@ -19,7 +19,7 @@ setup(
     packages=['HTMLMinifier'],
     zip_safe=False,
     platforms='any',
-    install_requires=['six'],
+    install_requires=[],
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',

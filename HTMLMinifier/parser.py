@@ -3,7 +3,11 @@
 from __future__ import unicode_literals
 
 import re
-from six.moves.html_parser import HTMLParser
+import sys
+if sys.version_info.major < 3:
+    from HTMLParser import HTMLParser
+else:
+    from html.parser import HTMLParser
 
 _EMPTY_SET = frozenset()
 
