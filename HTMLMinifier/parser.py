@@ -39,7 +39,7 @@ def _make_omission_rules(rules):
                 for tags, followed_tags in rules for tag in tags)
 
 
-# See: http://www.w3.org/TR/html-markup/elements.html
+# See: http://www.w3.org/TR/html5/syntax.html#optional-tags
 _OMISSION_RULES = _make_omission_rules((
     (('colgroup',), frozenset(('thead', 'tbody', 'tfoot', 'tr'))),
     (('dd', 'dt'), frozenset(('dt', 'dd'))),
@@ -177,7 +177,7 @@ class Parser(HTMLParser):
 
         .. seealso::
            `HTML5 - Start tags
-            <http://dev.w3.org/html5/spec-author-view/syntax.html#syntax-start-tag>`_
+            <http://www.w3.org/TR/html5-author/syntax.html#syntax-start-tag>`_
         """
         is_foreign = tag not in _VOID_ELEMENTS
         self._append_tag(tag, attrs, closing=is_foreign)
@@ -193,7 +193,7 @@ class Parser(HTMLParser):
 
         .. seealso::
            `CSS Text Module Level 3 - The White Space Processing Rules
-            <http://dev.w3.org/csswg/css-text-3/#egbidiwscollapse>`_
+            <http://www.w3.org/TR/css3-text/#egbidiwscollapse>`_
         """
 
         if self._tag_stack and self._tag_stack[-1] in _RM_WS_ELEMENTS:
