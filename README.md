@@ -4,6 +4,24 @@
 
 A simple HTML5 minifier inspired by [jinja2-htmlcompress](https://github.com/mitsuhiko/jinja2-htmlcompress).
 
+## Quickstart
+
+```python
+>>> from HTMLMinifier import minify
+>>> html = u'''
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Hello</title>
+      </head>
+      <body>
+        <p>hello, world</p>
+      </body>
+    </html>'''
+>>> minify(html)
+u'<!DOCTYPE html><html><head><title>Hello</title></head><body><p>hello, world</p></body></html>'
+```
+
 ## How it Works
 
 * Spaces in **space-preserved elements** (i.e., `<pre>`, `<script>`, `<style>` and `<textarea>`) will be preserved.
