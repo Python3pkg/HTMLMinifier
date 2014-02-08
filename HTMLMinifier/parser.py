@@ -41,7 +41,7 @@ def _make_omission_rules(rules):
 
 # See: http://www.w3.org/TR/html5/syntax.html#optional-tags
 _OMISSION_RULES = _make_omission_rules((
-    (('colgroup',), frozenset(('thead', 'tbody', 'tfoot', 'tr'))),
+    (('colgroup',), frozenset(('colgroup', 'thead', 'tbody', 'tfoot', 'tr'))),
     (('dd', 'dt'), frozenset(('dt', 'dd'))),
     (('li',), frozenset(('li',))),
     (('optgroup',), frozenset(('optgroup',))),
