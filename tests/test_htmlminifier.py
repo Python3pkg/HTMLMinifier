@@ -26,23 +26,16 @@ class TestMinifier(object):
                         '<body><p>hello, world</p></body></html>'
         assert_equal(minified_html, minify(html))
 
-    def test_remove_comments(self):
+    def test_comment(self):
         html = """
         <!--
         this comment will be removed.
         -->
         """
         assert_equal('', minify(html))
-
-    def test_preserve_comments(self):
-        html = """
-        <!--
-        this comment will be removed.
-        -->
-        """
         assert_equal(html.strip(), minify(html, remove_comments=False))
 
-    def test_ie_cond_comment(self):
+    def test_cond_comment(self):
         html = """
         <!--[if lt IE 9]>
           <p>  This is a paragraph  </p>
@@ -55,7 +48,7 @@ class TestMinifier(object):
                         '<![endif]-->'
         assert_equal(minified_html, minify(html))
 
-    def test_tag_with_attrs(self):
+    def test_tag_with_attr(self):
         html = """
         <div class="field required">
           <label for=username>User Name: </label>
@@ -74,7 +67,7 @@ class TestMinifier(object):
                         '</div>'
         assert_equal(minified_html, minify(html, remove_quotes=True))
 
-    def test_self_closing_tags(self):
+    def test_self_closing_tag(self):
         html = """
         <div class="clearfix" />
         <img src="test.jpg" />
@@ -83,7 +76,7 @@ class TestMinifier(object):
                         '<img src="test.jpg">'
         assert_equal(minified_html, minify(html))
 
-    def test_pre_ws_elements(self):
+    def test_space_preserved_element(self):
         html = """
         <script>
           var sum = 0;
@@ -108,7 +101,7 @@ class TestMinifier(object):
 
     def test_entity(self):
         html = """
-        <p> &lt; html &gt; </p>
+        <p> &lt; html &#x3E; </p>
         """
-        minified_html = '<p>&lt; html &gt;</p>'
+        minified_html = '<p>&lt; html &#x3E;</p>'
         assert_equal(minified_html, minify(html))
