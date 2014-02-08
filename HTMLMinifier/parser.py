@@ -229,5 +229,11 @@ class Parser(HTMLParser):
         self._buffer.append('&#{0};'.format(char))
         self._reset_newline_status()
 
+    def handle_pi(self, pi):
+        self._buffer.append('<?{0}>'.format(pi))
+
+    def unknown_decl(self, decl):
+        self._buffer.append('<![{0}]>'.format(decl))
+
     def get_minified_html(self):
         return ''.join(self._buffer).rstrip()
