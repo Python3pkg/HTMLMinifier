@@ -107,9 +107,12 @@ class Parser(HTMLParser):
     def _append_tag(self, tag, attrs, closing=False):
         tokens = [tag]
         for name, val in attrs:
-            if not self.remove_quotes or ' ' in val:
-                val = '"{0}"'.format(val)
-            tokens.append('{0}={1}'.format(name, val))
+            if val is None:
+                tokens.append(name)
+            else:
+                if not self.remove_quotes or ' ' in val:
+                    val = '"{0}"'.format(val)
+                tokens.append('{0}={1}'.format(name, val))
 
         self._buffer.append('<{0}{1}>'.format(' '.join(tokens),
                                               '/' if closing else ''))
