@@ -3,20 +3,25 @@ HTMLMinifier
 ------------
 
 A simple HTML5 minifier written in Python.
+
+:copyright: (c) 2014-2015, Chi-En Wu.
+:license: BSD 3-Clause License.
 """
 
-from setuptools import setup
+from setuptools import setup, find_packages
+
+import HTMLMinifier
 
 setup(
     name='HTMLMinifier',
-    version='0.1.1',
-    author='Chi-En Wu',
+    version=HTMLMinifier.__version__,
+    author=HTMLMinifier.__author__,
     author_email='',
     description='A simple HTML5 minifier written in Python.',
     long_description=__doc__,
     url='https://github.com/jason2506/HTMLMinifier',
-    license='BSD 3-Clause License',
-    packages=['HTMLMinifier'],
+    license=HTMLMinifier.__license__,
+    packages=find_packages(),
     zip_safe=False,
     platforms='any',
     install_requires=[],
@@ -30,6 +35,8 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: Implementation :: PyPy',
         "Topic :: Text Processing :: Markup :: HTML",
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]
