@@ -2,6 +2,7 @@
 .coverage
 *.pyc
 
+.tox/
 dist/
 build/
 *.egg-info/

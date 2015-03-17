@@ -9,8 +9,22 @@ A simple HTML5 minifier written in Python.
 """
 
 from setuptools import setup, find_packages
+from setuptools.command.test import test as TestCommand
 
 import HTMLMinifier
+
+
+class Tox(TestCommand):
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = ['-v', '-epy']
+        self.test_suite = True
+
+    def run_tests(self):
+        import tox
+        tox.cmdline(self.test_args)
+
 
 setup(
     name='HTMLMinifier',
@@ -25,6 +39,8 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[],
+    tests_require=['tox'],
+    cmdclass={'test': Tox},
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',

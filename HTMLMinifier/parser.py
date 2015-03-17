@@ -61,9 +61,7 @@ class Parser(HTMLParser):
         self.remove_comments = remove_comments
         self.remove_quotes = remove_quotes
 
-        self.strict = False  # compatible with Python 3
-
-        self.reset()
+        HTMLParser.__init__(self)
 
     def reset(self):
         HTMLParser.reset(self)

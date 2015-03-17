@@ -2,8 +2,6 @@
 
 from __future__ import unicode_literals
 
-from nose.tools import assert_equal
-
 from HTMLMinifier import minify
 
 
@@ -24,7 +22,7 @@ class TestMinifier(object):
         minified_html = '<!DOCTYPE html>' \
                         '<html><head><title>Hello</title></head>' \
                         '<body><p>hello, world</p></body></html>'
-        assert_equal(minified_html, minify(html))
+        assert minify(html) == minified_html
 
     def test_comment(self):
         html = """
@@ -32,8 +30,8 @@ class TestMinifier(object):
         this comment will be removed.
         -->
         """
-        assert_equal('', minify(html))
-        assert_equal(html.strip(), minify(html, remove_comments=False))
+        assert minify(html) == ''
+        assert minify(html, remove_comments=False) == html.strip()
 
     def test_cond_comment(self):
         html = """
@@ -46,7 +44,7 @@ class TestMinifier(object):
                         '<p>This is a paragraph</p>' \
                         '<p>This is another paragraph</p>' \
                         '<![endif]-->'
-        assert_equal(minified_html, minify(html))
+        assert minify(html) == minified_html
 
     def test_tag_with_attr(self):
         html = """
@@ -59,13 +57,13 @@ class TestMinifier(object):
                         '<label for="username">User Name: </label>' \
                         '<input type="text" id="username">' \
                         '</div>'
-        assert_equal(minified_html, minify(html))
+        assert minify(html) == minified_html
 
         minified_html = '<div class="field required">' \
                         '<label for=username>User Name: </label>' \
                         '<input type=text id=username>' \
                         '</div>'
-        assert_equal(minified_html, minify(html, remove_quotes=True))
+        assert minify(html, remove_quotes=True) == minified_html
 
     def test_self_closing_tag(self):
         html = """
@@ -74,7 +72,7 @@ class TestMinifier(object):
         """
         minified_html = '<div class="clearfix"/>' \
                         '<img src="test.jpg">'
-        assert_equal(minified_html, minify(html))
+        assert minify(html) == minified_html
 
     def test_space_preserved_element(self):
         html = """
@@ -86,7 +84,7 @@ class TestMinifier(object):
           console.log(i);
         </script>
         """
-        assert_equal(html.strip(), minify(html))
+        assert minify(html) == html.strip()
 
     def test_collapseing_spaces(self):
         html = """
@@ -97,11 +95,11 @@ class TestMinifier(object):
         minified_html = '<p>This is a [ <a href="index.html">link </a>]</p>' \
                         '<p>Some <b>highlighted </b><i>text</i></p>' \
                         '<p>More <b>complex <i>example </i></b>!</p>'
-        assert_equal(minified_html, minify(html))
+        assert minify(html) == minified_html
 
     def test_entity(self):
         html = """
         <p> &lt; html &#x3E; </p>
         """
         minified_html = '<p>&lt; html &#x3E;</p>'
-        assert_equal(minified_html, minify(html))
+        assert minify(html) == minified_html

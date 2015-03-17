@@ -3,13 +3,15 @@ language: python
 python:
   - "2.6"
   - "2.7"
+  - "3.2"
   - "3.3"
+  - "3.4"
   - "pypy"
 
 install:
-  - python setup.py install
+  - pip install tox
 
-script: nosetests
+script: python setup.py test
 
 branches:
   except:
