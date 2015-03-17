@@ -54,6 +54,19 @@ _OMISSION_RULES = _make_omission_rules((
     (('tr',), frozenset(('tr',)))
 ))
 
+_DECL_FORMAT = '<!%s>'
+_UNKNOWN_DECL_FORMAT = '<![%s]>'
+_PI_FORMAT = '<?%s>'
+_COND_COMMENT_START_FORMAT = '<!--[if%s]>'
+_COND_COMMENT_END_FORMAT = '<![endif]-->'
+_COMMENT_FORMAT = '<!--%s-->'
+_ELEM_START_FORMAT = '<%s%s>'
+_ELEM_END_FORMAT = '</%s>'
+_ATTR_VAL_FORMAT = '"%s"'
+_ATTR_FORMAT = '%s=%s'
+_ENTITY_REF_FORMAT = '&%s;'
+_CHAR_REF_FORMAT = '&#%s;'
+
 
 class Parser(HTMLParser):
 
@@ -96,27 +109,29 @@ class Parser(HTMLParser):
             <http://www.w3.org/TR/css3-text/#white-space-phase-2>`_
         """
 
-        if self._last_text_idx >= 0:
-            data = self._buffer[self._last_text_idx]
-            self._buffer[self._last_text_idx] = data.rstrip()
+        last_text_idx = self._last_text_idx
+        if last_text_idx >= 0:
+            buf = self._buffer
+            buf[last_text_idx] = buf[last_text_idx].rstrip()
 
         self._remove_begining_ws = True
 
     def _append_tag(self, tag, attrs, closing=False):
         tokens = [tag]
+        append_token = tokens.append
         for name, val in attrs:
             if val is None:
-                tokens.append(name)
+                append_token(name)
             else:
                 if not self.remove_quotes or ' ' in val:
-                    val = '"{0}"'.format(val)
-                tokens.append('{0}={1}'.format(name, val))
+                    val = _ATTR_VAL_FORMAT % val
+                append_token(_ATTR_FORMAT % (name, val))
 
-        self._buffer.append('<{0}{1}>'.format(' '.join(tokens),
-                                              '/' if closing else ''))
+        self._buffer.append(_ELEM_START_FORMAT % (' '.join(tokens),
+                                                  '/' if closing else ''))
 
     def handle_decl(self, decl):
-        self._buffer.append('<!{0}>'.format(decl))
+        self._buffer.append(_DECL_FORMAT % decl)
 
     def handle_comment(self, comment):
         """
@@ -132,21 +147,22 @@ class Parser(HTMLParser):
             cond = match.group(1)
             content = match.group(2)
 
-            self._buffer.append('<!--[if{0}]>'.format(cond))
+            self._buffer.append(_COND_COMMENT_START_FORMAT % cond)
             self._push_status()
             self.feed(content)
             self._pop_status()
-            self._buffer.append('<![endif]-->')
+            self._buffer.append(_COND_COMMENT_END_FORMAT)
         elif not self.remove_comments:
-            self._buffer.append('<!--{0}-->'.format(comment))
+            self._buffer.append(_COMMENT_FORMAT % comment)
 
     def handle_starttag(self, tag, attrs):
-        if self._tag_stack and \
-           tag in _OMISSION_RULES.get(self._tag_stack[-1], _EMPTY_SET):
-            self._tag_stack.pop()
+        tag_stack = self._tag_stack
+        if tag_stack and \
+           tag in _OMISSION_RULES.get(tag_stack[-1], _EMPTY_SET):
+            tag_stack.pop()
 
         if tag not in _VOID_ELEMENTS:
-            self._tag_stack.append(tag)
+            tag_stack.append(tag)
 
         if tag in _BLOCK_ELEMENTS:
             self._enter_newline()
@@ -159,10 +175,11 @@ class Parser(HTMLParser):
         self._append_tag(tag, attrs)
 
     def handle_endtag(self, tag):
-        while tag != self._tag_stack.pop():
+        tag_stack_pop = self._tag_stack.pop
+        while tag != tag_stack_pop():
             pass
 
-        self._buffer.append('</{0}>'.format(tag))
+        self._buffer.append(_ELEM_END_FORMAT % tag)
         if tag in _BLOCK_ELEMENTS:
             self._enter_newline()
 
@@ -197,7 +214,8 @@ class Parser(HTMLParser):
             <http://www.w3.org/TR/css3-text/#egbidiwscollapse>`_
         """
 
-        if self._tag_stack and self._tag_stack[-1] in _RM_WS_ELEMENTS:
+        tag_stack = self._tag_stack
+        if tag_stack and tag_stack[-1] in _RM_WS_ELEMENTS:
             # just ignore the content of this element
             assert data.strip() == ''
             return
@@ -223,18 +241,18 @@ class Parser(HTMLParser):
         self._buffer.append(data)
 
     def handle_entityref(self, entity):
-        self._buffer.append('&{0};'.format(entity))
+        self._buffer.append(_ENTITY_REF_FORMAT % entity)
         self._reset_newline_status()
 
     def handle_charref(self, char):
-        self._buffer.append('&#{0};'.format(char))
+        self._buffer.append(_CHAR_REF_FORMAT % char)
         self._reset_newline_status()
 
     def handle_pi(self, pi):
-        self._buffer.append('<?{0}>'.format(pi))
+        self._buffer.append(_PI_FORMAT % pi)
 
     def unknown_decl(self, decl):
-        self._buffer.append('<![{0}]>'.format(decl))
+        self._buffer.append(_UNKNOWN_DECL_FORMAT % decl)
 
     def get_minified_html(self):
         return ''.join(self._buffer).rstrip()
